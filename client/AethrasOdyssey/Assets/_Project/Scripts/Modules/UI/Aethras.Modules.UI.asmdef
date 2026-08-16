@@ -1,0 +1,19 @@
+﻿{
+    "name": "Aethras.Modules.UI",
+    "rootNamespace": "Aethras.Modules.UI",
+    "references": [
+        "Aethras.Core",
+        "Aethras.Domain",
+        "Aethras.Application",
+        "Aethras.Presentation"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,87 @@
+# Python AI
+ai/.venv/
+ai/**/__pycache__/
+ai/**/*.py[cod]
+ai/requirements.lock.txt
+
+# Go
+server/game-server/game-server.exe
+server/game-server/game-server
+
+# Environment
+.env
+
+# Godot
+game/godot/.godot/
+game/godot/.import/
+game/godot/export/
+
+# Unity (legacy scaffold)
+client/AethrasOdyssey/[Ll]ibrary/
+client/AethrasOdyssey/[Tt]emp/
+client/AethrasOdyssey/[Oo]bj/
+client/AethrasOdyssey/[Bb]uild/
+client/AethrasOdyssey/[Bb]uilds/
+client/AethrasOdyssey/[Ll]ogs/
+client/AethrasOdyssey/[Uu]ser[Ss]ettings/
+client/AethrasOdyssey/[Mm]emoryCaptures/
+client/AethrasOdyssey/[Rr]ecordings/
+client/AethrasOdyssey/.vs/
+client/AethrasOdyssey/.gradle/
+client/AethrasOdyssey/*.csproj
+client/AethrasOdyssey/*.unityproj
+client/AethrasOdyssey/*.sln
+client/AethrasOdyssey/*.suo
+client/AethrasOdyssey/*.user
+client/AethrasOdyssey/*.userprefs
+client/AethrasOdyssey/*.pidb
+client/AethrasOdyssey/*.booproj
+client/AethrasOdyssey/*.svd
+client/AethrasOdyssey/*.pdb
+client/AethrasOdyssey/*.mdb
+client/AethrasOdyssey/*.opendb
+client/AethrasOdyssey/*.VC.db
+client/AethrasOdyssey/sysinfo.txt
+
+# Python
+server/**/__pycache__/
+server/**/*.py[cod]
+server/**/*$py.class
+server/**/.venv/
+server/**/venv/
+server/**/.mypy_cache/
+server/**/.pytest_cache/
+server/**/.ruff_cache/
+server/**/dist/
+server/**/build/
+server/**/*.egg-info/
+
+# Project spec documents (local design notes)
+idea*.tex
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+*.pem
+credentials.json
+secrets/
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Saves & local data
+*.save
+*.sav
+saves/
+
+# Research exports (keep templates, ignore raw exports)
+docs/research/exports/

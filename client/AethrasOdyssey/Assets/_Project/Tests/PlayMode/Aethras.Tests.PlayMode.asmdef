@@ -1,0 +1,28 @@
+{
+    "name": "Aethras.Tests.PlayMode",
+    "rootNamespace": "Aethras.Tests.PlayMode",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Aethras.Core",
+        "Aethras.Domain",
+        "Aethras.Application",
+        "Aethras.Infrastructure",
+        "Aethras.Modules.Game",
+        "Aethras.Modules.Player",
+        "Aethras.Modules.World"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

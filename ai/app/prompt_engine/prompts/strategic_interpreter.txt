@@ -1,0 +1,2 @@
+Strategic interpretation prompt template for LLM stage 2.
+Infer strategy_type, objective, expected_effect from semantic parse results.

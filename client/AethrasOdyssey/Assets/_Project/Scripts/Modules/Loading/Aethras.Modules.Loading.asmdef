@@ -1,0 +1,19 @@
+﻿{
+    "name": "Aethras.Modules.Loading",
+    "rootNamespace": "Aethras.Modules.Loading",
+    "references": [
+        "Aethras.Core",
+        "Aethras.Domain",
+        "Aethras.Application",
+        "Aethras.Infrastructure"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

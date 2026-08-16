@@ -1,0 +1,2 @@
+Action compilation prompt template for LLM stage 3.
+Compile interpretation into ActionProposal with controlled action vocabulary.

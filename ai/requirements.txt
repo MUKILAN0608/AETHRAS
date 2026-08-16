@@ -1,0 +1,21 @@
+# AETHRAS AI Service — pinned initial dependencies
+# Install with: pip install -r requirements.txt
+# NOTE: torch CPU build — no CUDA on this dev machine (Intel Iris Xe)
+
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.1
+numpy==2.2.1
+scipy==1.15.1
+torch==2.5.1
+transformers==4.47.1
+sentence-transformers==3.3.1
+networkx==3.4.2
+httpx==0.28.1
+python-dotenv==1.0.1
+orjson==3.10.12
+
+# Dev / test
+pytest==8.3.4
+pytest-asyncio==0.25.2

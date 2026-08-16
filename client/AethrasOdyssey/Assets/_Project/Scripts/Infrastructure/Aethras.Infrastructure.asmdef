@@ -1,0 +1,19 @@
+{
+    "name": "Aethras.Infrastructure",
+    "rootNamespace": "Aethras.Infrastructure",
+    "references": [
+        "Aethras.Core",
+        "Aethras.Domain",
+        "Aethras.Application",
+        "Aethras.AI.Client"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

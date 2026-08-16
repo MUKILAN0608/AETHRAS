@@ -1,0 +1,3 @@
+Semantic interpretation prompt template for LLM stage 1.
+Extract intent, entities, and relationships from the player prompt.
+Output must be valid JSON matching the SemanticInterpretation schema.

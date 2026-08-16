@@ -1,0 +1,18 @@
+﻿{
+    "name": "Aethras.Modules.Quest",
+    "rootNamespace": "Aethras.Modules.Quest",
+    "references": [
+        "Aethras.Core",
+        "Aethras.Domain",
+        "Aethras.Application"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

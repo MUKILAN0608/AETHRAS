@@ -1,0 +1,1 @@
+"""AETHRAS FastAPI application package."""

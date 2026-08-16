@@ -1,0 +1,16 @@
+{
+    "name": "Aethras.Domain",
+    "rootNamespace": "Aethras.Domain",
+    "references": [
+        "Aethras.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

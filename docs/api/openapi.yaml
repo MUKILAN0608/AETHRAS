@@ -1,0 +1,166 @@
+openapi: 3.1.0
+info:
+  title: AETHRAS Narrative API
+  description: REST API contract between Unity client and Python FastAPI backend
+  version: 0.1.0
+
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Local development
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      operationId: healthCheck
+      responses:
+        "200":
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /narrative/dialogue:
+    post:
+      summary: Generate adaptive NPC dialogue
+      operationId: generateDialogue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NarrativeRequest"
+      responses:
+        "200":
+          description: Generated dialogue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NarrativeResponse"
+
+  /narrative/environment:
+    post:
+      summary: Generate environmental narrative
+      operationId: generateEnvironmentalNarrative
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NarrativeRequest"
+      responses:
+        "200":
+          description: Generated narrative
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NarrativeResponse"
+
+  /memory/choice:
+    post:
+      summary: Record permanent player choice
+      operationId: submitChoice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChoiceSubmission"
+      responses:
+        "200":
+          description: Choice recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /memory/sync:
+    post:
+      summary: Sync memory graph
+      operationId: syncMemory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemorySyncRequest"
+      responses:
+        "200":
+          description: Memory synced
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemorySyncResult"
+
+components:
+  schemas:
+    NarrativeRequest:
+      type: object
+      required: [sessionId, worldId]
+      properties:
+        sessionId:
+          type: string
+        worldId:
+          type: string
+        npcId:
+          type: string
+        contextTag:
+          type: string
+        playerInput:
+          type: string
+
+    NarrativeResponse:
+      type: object
+      properties:
+        responseId:
+          type: string
+        text:
+          type: string
+        suggestedChoices:
+          type: array
+          items:
+            type: string
+        isValidated:
+          type: boolean
+
+    ChoiceSubmission:
+      type: object
+      required: [sessionId, choiceId, worldId]
+      properties:
+        sessionId:
+          type: string
+        choiceId:
+          type: string
+        worldId:
+          type: string
+        consequenceTag:
+          type: string
+
+    MemorySyncRequest:
+      type: object
+      required: [sessionId]
+      properties:
+        sessionId:
+          type: string
+        activeMemoryTags:
+          type: array
+          items:
+            type: string
+
+    MemorySyncResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        updatedMemoryTags:
+          type: array
+          items:
+            type: string
