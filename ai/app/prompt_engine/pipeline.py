@@ -127,6 +127,7 @@ class PromptPipeline:
         from app.prompt_schemas import LatencyMetrics
 
         response = InterpretResponse(
+            critic_findings=critic_warnings,
             status=validation.status,
             interpretation=interpretation,
             action=action,

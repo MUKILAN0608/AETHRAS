@@ -4,6 +4,10 @@ Natural language prompts flow through a multi-stage pipeline before any world ch
 
 ## Pipeline
 
+Optional Phase 3.5 evaluates the existing proposal after deterministic checks.
+Godot execution now requires a Go-issued `proposal_id`; INVALID, AMBIGUOUS and
+review-required results cannot execute. See [decision layer](PHASE35_DECISION_ENGINE.md).
+
 ```
 Prompt → Normalize → Intent/Entities/Relations/Temporal
       → Strategic Analysis → Constraints → Compile → Critic → Validate
@@ -31,7 +35,7 @@ Prompt → Normalize → Intent/Entities/Relations/Temporal
 
 1. **Interpret Prompt** — async `POST /api/prompt/interpret`
 2. UI shows intent, entities, strategy, confidence, novelty, status
-3. **Execute** — async `POST /api/prompt/execute` (only when not INVALID)
+3. **Execute** — async `POST /api/prompt/execute` (only when VALID with a Go-issued proposal token)
 
 ## Action Mapping (Phase 3 → Phase 2)
 

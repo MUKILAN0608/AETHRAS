@@ -14,3 +14,6 @@
 *.unity merge=unityyamlmerge
 *.prefab merge=unityyamlmerge
 *.asset merge=unityyamlmerge
+
+# Godot scripts require consistent newlines on Windows.
+*.gd text eol=lf

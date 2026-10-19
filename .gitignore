@@ -65,6 +65,7 @@ idea*.tex
 !.env.example
 *.pem
 credentials.json
+instructions.md
 secrets/
 
 # OS
@@ -85,3 +86,10 @@ saves/
 
 # Research exports (keep templates, ignore raw exports)
 docs/research/exports/
+
+# Local verification dependencies and generated research logs
+.test-deps/
+scripts/__pycache__/
+ai/logs/*.jsonl
+ai/app/logs/*.jsonl
+.pytest_cache/

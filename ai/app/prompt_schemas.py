@@ -4,6 +4,7 @@ from enum import Enum
 from typing import Any
 
 from pydantic import BaseModel, Field
+from app.decision_engine.schemas import DecisionResult
 
 
 class ValidationStatus(str, Enum):
@@ -178,6 +179,8 @@ class InterpretRequest(BaseModel):
 
 
 class InterpretResponse(BaseModel):
+    critic_findings: list[str] = Field(default_factory=list)
+    decision: DecisionResult | None = None
     status: ValidationStatus
     interpretation: SemanticInterpretation
     action: ActionProposal | None = None

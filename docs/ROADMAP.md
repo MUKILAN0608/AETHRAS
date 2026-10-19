@@ -41,6 +41,22 @@
 - [x] Godot interpret → review → execute async flow
 - [x] 28 acceptance tests (idea3.tex §26)
 
+## PHASE 3.5: Clef-Flash Decision Intelligence (offline implementation)
+
+- [x] Optional asynchronous bounded evaluation; disabled by default
+- [x] Typed choice/score/noul contract and deterministic review/failure gates
+- [x] World-bound single-use Go proposal execution and Godot metadata
+- [x] Offline mocked-provider and execution-safety tests
+- [x] Existing research stream extension and paired evaluation harness
+- [x] Root dotenv loading, Cloudflare REST envelope and safe configuration health
+- [x] Correlated Go validation/world-event research records
+- [x] Headless Godot interpret/review/execute, tick and HTTP-error regression smoke
+- [ ] Live provider smoke test with explicitly supplied credentials
+- [ ] Reviewed paired baseline/treatment evaluation and threshold calibration
+- [ ] Graphical player acceptance of interpret-review-execute workflow
+
+See [Phase 3.5 setup and limitations](PHASE35_DECISION_ENGINE.md).
+
 ## PHASE 4: Real LLM Integration + Prompt Engineering
 
 - [ ] Connect Qwen3.6-35B-A3B (or local Ollama) via LLMProvider
@@ -101,4 +117,4 @@
 
 ---
 
-**Current phase:** Phase 3 complete. Next: Phase 4 (Real LLM Integration).
+**Current phase:** Phase 3.5 offline implementation; live verification and evaluation pending.

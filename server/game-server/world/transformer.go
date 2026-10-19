@@ -286,6 +286,9 @@ func (t *Transformer) applyStorm(ws *WorldState, action StructuredAction, result
 }
 
 func (t *Transformer) resolveTargets(ws *WorldState, target string, types ...string) []string {
+	if _, exists := ws.Entities[target]; exists {
+		return []string{target}
+	}
 	var ids []string
 	target = normalizeType(target)
 	for id, e := range ws.Entities {

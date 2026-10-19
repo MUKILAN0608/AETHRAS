@@ -12,8 +12,21 @@ from app.prompt_schemas import (
     ValidationResult,
 )
 
-_LOG_DIR = Path(__file__).resolve().parent.parent / "logs"
+_LOG_DIR = Path(__file__).resolve().parent / "logs"
 _LOG_FILE = _LOG_DIR / "experiments.jsonl"
+
+
+def log_decision(request, response):
+    """Correlated post-policy event in the existing research stream."""
+    _LOG_DIR.mkdir(parents=True, exist_ok=True)
+    record = {"event": "decision", "timestamp": datetime.now(timezone.utc).isoformat(),
+              "match_id": request.world_id, "turn": request.turn,
+              "action_id": response.action.action_id if response.action else None,
+              "critic_findings": response.critic_findings,
+              "validation_result": response.validation.model_dump(mode="json"),
+              "decision": response.decision.model_dump(mode="json")}
+    with _LOG_FILE.open("a", encoding="utf-8") as stream:
+        stream.write(json.dumps(record) + "\n")
 
 
 def log_experiment(

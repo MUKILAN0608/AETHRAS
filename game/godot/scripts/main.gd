@@ -224,7 +224,8 @@ func _on_interpretation_ready(data: Dictionary) -> void:
 
 	var interp: Dictionary = data.get("interpretation", {})
 
-	var action: Dictionary = data.get("action", {})
+	var raw_action = data.get("action")
+	var action: Dictionary = raw_action if raw_action is Dictionary else {}
 
 	var conf: Dictionary = data.get("confidence", {})
 
@@ -240,7 +241,8 @@ func _on_interpretation_ready(data: Dictionary) -> void:
 
 
 
-	var strategy: Dictionary = interp.get("strategy", {})
+	var raw_strategy = interp.get("strategy")
+	var strategy: Dictionary = raw_strategy if raw_strategy is Dictionary else {}
 
 	var intent: String = str(interp.get("intent", "")).replace("_", " ").capitalize()
 
@@ -276,7 +278,15 @@ func _on_interpretation_ready(data: Dictionary) -> void:
 
 	_pending_action = action
 
-	_execute_button.disabled = status == "INVALID" or action.is_empty()
+	var raw_decision = data.get("decision")
+	var decision: Dictionary = raw_decision if raw_decision is Dictionary else {}
+	if decision.get("fallback", false):
+		_status_label.text = "Decision service unavailable. Reinterpret before executing."
+	elif decision.get("review_required", false):
+		_status_label.text = "Additional review required. Edit or reinterpret the prompt."
+	if not decision.is_empty():
+		_interpretation_label.text += "\n\nDecision: %s\nModel confidence: %s\nImpact (0-2): %s\nAdditional review: %s\nSimulation advised: %s\nCandidate: %s\nLatency: %s ms | Fallback: %s\nGame rules are checked by Go at execution." % [decision.get("status", ""), str(decision.get("confidence")), str(decision.get("strategic_impact")), str(decision.get("review_required", false)), str(decision.get("simulation_recommended", false)), str(decision.get("selected_candidate")), str(decision.get("latency_ms", 0)), str(decision.get("fallback", false))]
+	_execute_button.disabled = status != "VALID" or action.is_empty() or str(data.get("proposal_id", "")).is_empty()
 
 
 
@@ -287,6 +297,12 @@ func _on_world_updated(state, transform: Dictionary) -> void:
 	_is_busy = false
 
 	_update_ui_state(true)
+	if transform.is_empty():
+		_pending_action = {}
+		_execute_button.disabled = true
+		_status_label.text = "ENVIRONMENT ADVANCED"
+		_world_state_label.text = "WORLD STATE CHANGED — turn %d" % state.turn
+		return
 
 	var action_proposal: Dictionary = _pending_action
 
@@ -329,6 +345,7 @@ func _on_error(message: String) -> void:
 	_update_ui_state(_semantic_world.current_state != null)
 
 	_status_label.text = "Error: %s" % message
+	_execute_button.disabled = true
 
 
 
@@ -367,10 +384,11 @@ func _clear_entity_container() -> void:
 
 
 func _update_ui_state(world_ready: bool) -> void:
+	var pending: Dictionary = _semantic_world.pending_interpretation
+	_execute_button.disabled = _is_busy or str(pending.get("status", "")) != "VALID" or str(pending.get("proposal_id", "")).is_empty()
 
 	_submit_button.disabled = _is_busy or not world_ready
 
 	_tick_button.disabled = _is_busy or not world_ready
 
 	_generate_button.disabled = _is_busy
-

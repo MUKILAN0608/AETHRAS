@@ -2,6 +2,11 @@
 
 ## Overview
 
+Phase 3.5 adds an optional server-side bounded Clef-Flash advisory service after Python
+critic/validation. Go issues single-use world-bound proposals and remains the
+execution authority. See [Phase 3.5](PHASE35_DECISION_ENGINE.md) for contracts,
+configuration, failure policy, and remaining live verification.
+
 AETHRAS follows a **three-tier game architecture** where each layer has a single clear responsibility. Layers communicate via HTTP/JSON — never direct coupling between Godot and Python.
 
 ## Data Flow

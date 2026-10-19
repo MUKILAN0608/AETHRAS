@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/aethras/game-server/world"
@@ -40,9 +41,9 @@ type HealthResponse struct {
 }
 
 type PromptRequest struct {
-	Prompt   string `json:"prompt"`
-	Actor    string `json:"actor"`
-	WorldID  string `json:"world_id"`
+	Prompt  string `json:"prompt"`
+	Actor   string `json:"actor"`
+	WorldID string `json:"world_id"`
 }
 
 type ParsedActionResponse struct {
@@ -57,11 +58,12 @@ type ParsedActionResponse struct {
 }
 
 type PromptResponse struct {
-	ParsedAction ParsedActionResponse `json:"parsed_action"`
+	ParsedAction ParsedActionResponse  `json:"parsed_action"`
 	Transform    world.TransformResult `json:"transform"`
 }
 
 var worldManager = world.NewManager()
+var worldRequests sync.Mutex
 
 func main() {
 	cfg := loadConfig()
@@ -215,6 +217,8 @@ func withCORS(next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}
+		worldRequests.Lock()
+		defer worldRequests.Unlock()
 		next.ServeHTTP(w, r)
 	})
 }

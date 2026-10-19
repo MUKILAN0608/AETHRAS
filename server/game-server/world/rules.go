@@ -1,5 +1,7 @@
 package world
 
+import "math"
+
 // Rules defines validation and transformation constraints.
 type Rules struct {
 	AllowedActions []string
@@ -18,6 +20,11 @@ func NewRules() *Rules {
 
 // ValidateAction checks if a structured action is permitted.
 func (r *Rules) ValidateAction(action StructuredAction) (bool, string) {
+	if math.IsNaN(action.Intensity) || math.IsInf(action.Intensity, 0) || action.Intensity < 0 ||
+		math.IsNaN(action.Magnitude) || math.IsInf(action.Magnitude, 0) || action.Magnitude < 0 || action.Magnitude > r.MaxIntensity ||
+		math.IsNaN(action.Confidence) || math.IsInf(action.Confidence, 0) || action.Confidence > 1 {
+		return false, "invalid numeric action limits"
+	}
 	if action.Action == "NONE" {
 		return false, "action is NONE"
 	}

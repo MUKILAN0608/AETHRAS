@@ -12,22 +12,26 @@ import (
 )
 
 type InterpretRequest struct {
-	Prompt        string                 `json:"prompt"`
-	PlayerID      string                 `json:"player_id"`
-	Turn          int                    `json:"turn"`
-	WorldID       string                 `json:"world_id"`
-	WorldContext  map[string]interface{} `json:"world_context"`
-	History       []map[string]interface{} `json:"history"`
-	Actor         string                 `json:"actor"`
+	Prompt       string                   `json:"prompt"`
+	PlayerID     string                   `json:"player_id"`
+	Turn         int                      `json:"turn"`
+	WorldID      string                   `json:"world_id"`
+	WorldContext map[string]interface{}   `json:"world_context"`
+	History      []map[string]interface{} `json:"history"`
+	Actor        string                   `json:"actor"`
 }
 
 type ExecuteRequest struct {
-	Prompt string                 `json:"prompt"`
-	Actor  string                 `json:"actor"`
-	Action map[string]interface{} `json:"action"`
+	ProposalID string                 `json:"proposal_id"`
+	Prompt     string                 `json:"prompt"`
+	Actor      string                 `json:"actor"`
+	Action     map[string]interface{} `json:"action"`
 }
 
 type InterpretResponse struct {
+	CriticFindings []string               `json:"critic_findings"`
+	Decision       map[string]interface{} `json:"decision"`
+	ProposalID     string                 `json:"proposal_id,omitempty"`
 	Status         string                 `json:"status"`
 	Interpretation map[string]interface{} `json:"interpretation"`
 	Action         map[string]interface{} `json:"action"`
@@ -90,9 +94,16 @@ func handlePromptInterpret(w http.ResponseWriter, r *http.Request, cfg Config) {
 	}
 
 	state := worldManager.State()
-	if len(req.WorldContext) == 0 && state != nil {
+	if state != nil {
 		req.WorldContext = buildWorldContextFromState(state)
+		req.WorldID = state.WorldID
+		req.Turn = state.Turn
 	}
+	if req.PlayerID != "human" {
+		writeJSON(w, 422, map[string]string{"error": "unsupported player"})
+		return
+	}
+	digest := stateDigest()
 	if req.Turn == 0 && state != nil {
 		req.Turn = state.Turn
 	}
@@ -118,12 +129,23 @@ func handlePromptInterpret(w http.ResponseWriter, r *http.Request, cfg Config) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(respBody)
+	var interpretation InterpretResponse
+	if json.Unmarshal(respBody, &interpretation) != nil {
+		writeJSON(w, 502, map[string]string{"error": "invalid AI response"})
+		return
+	}
+	token, tokenErr := registerProposal(&interpretation, req.Prompt, req.PlayerID, digest)
+	if tokenErr != nil {
+		writeJSON(w, 503, map[string]string{"error": "proposal unavailable"})
+		return
+	}
+	interpretation.ProposalID = token
+	writeJSON(w, http.StatusOK, interpretation)
 }
 
 func handlePromptExecute(w http.ResponseWriter, r *http.Request, _ Config) {
+	audit := executionAudit{Outcome: "rejected", Reason: "invalid_request"}
+	defer func() { logExecutionAudit(audit) }()
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
@@ -138,6 +160,28 @@ func handlePromptExecute(w http.ResponseWriter, r *http.Request, _ Config) {
 	if req.Actor == "" {
 		req.Actor = "human"
 	}
+	proposal, exists := proposals[req.ProposalID]
+	if exists {
+		audit.RequestID = proposal.DecisionID
+		audit.Provider = proposal.Provider
+		audit.ActionID, _ = proposal.Action["action_id"].(string)
+	}
+	if state := worldManager.State(); state != nil {
+		audit.WorldID = state.WorldID
+		audit.Turn = state.Turn
+	}
+	if !exists || time.Now().After(proposal.Expires) || proposal.State != stateDigest() {
+		audit.Reason = "invalid_or_stale_proposal"
+		writeJSON(w, http.StatusConflict, map[string]string{"error": "proposal missing, expired, used, or stale; reinterpret"})
+		return
+	}
+	if req.Actor != proposal.Actor || req.Prompt != proposal.Prompt {
+		audit.Reason = "context_changed"
+		writeJSON(w, 422, map[string]string{"error": "proposal context changed"})
+		return
+	}
+	// Execute the stored action, never client-supplied modifications.
+	req.Action = proposal.Action
 
 	actionMap := req.Action
 	if actionMap == nil {
@@ -163,19 +207,35 @@ func handlePromptExecute(w http.ResponseWriter, r *http.Request, _ Config) {
 	if conf, ok := actionMap["confidence"].(float64); ok {
 		structured.Confidence = conf
 	}
+	if err := validateCurrentTargets(actionMap, &structured); err != nil {
+		audit.Reason = "target_or_permission_rejected"
+		writeJSON(w, 422, map[string]string{"error": err.Error()})
+		return
+	}
 
 	valid, reason := world.NewRules().ValidateAction(structured)
 	if !valid {
+		audit.Reason = "action_rules_rejected"
 		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": reason})
 		return
 	}
 
+	delete(proposals, req.ProposalID)
 	result, err := worldManager.ApplyAction(structured, req.Actor, req.Prompt)
 	if err != nil {
+		audit.Reason = "world_revalidation_rejected"
 		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": err.Error()})
 		return
 	}
 
+	audit.Outcome = "accepted"
+	audit.Reason = ""
+	if result.WorldState != nil {
+		audit.Turn = result.WorldState.Turn
+	}
+	for _, event := range result.Events {
+		audit.EventIDs = append(audit.EventIDs, event.ID)
+	}
 	writeJSON(w, http.StatusOK, map[string]interface{}{
 		"action_proposal": actionMap,
 		"parsed_action":   structured,
